@@ -29,5 +29,3 @@ jobs:
            echo "This job is running on a Windows runner."
            echo "Runner OS: $RUNNER_OS"
           
-          echo "This job is running on a MacOS runner."
-          echo "Runner OS: $RUNNER_OS"
