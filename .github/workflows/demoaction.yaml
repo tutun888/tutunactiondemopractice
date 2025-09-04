@@ -1,28 +1,31 @@
-name: 05 - 1 - Event Filters and Activity Types
-run-name: 06 - Contexts | DEBUG - ${{ inputs.debug }}
-  
+name: 09 - Using Functions
+
 on:
+  pull_request:
   workflow_dispatch:
-   inputs:
-      debug:
-        description: 'Enable debug mode'
-        required: false
-        type: boolean
-        default: false
 
 jobs:
-  ubuntu-echo:
+  echo1:
     runs-on: ubuntu-latest
     steps:
-      - name: Show OS
-        run: |
-          echo "Event name: ${{ github.event_name }}"
-          echo "Ref: ${{ github.ref }}"
-          echo "SHA: ${{ github.sha }}"
-          echo "Actor: ${{ github.actor }}"
-          echo "Workflow: ${{ github.workflow }}"
-          echo "Run ID: ${{ github.run_id }}"
-          echo "Run number: ${{ github.run_number }}"
-  
-      - name: Retrieve Variable
-        run: echo "MY_VAR value ${{ vars.MY_VAR }}"
+      - name: Sleep for 20 seconds
+        run: sleep 20
+
+      - name: Failing step
+        run: exit 1
+
+      - name: I will be skipped
+        if: success()
+        run: echo "I will print if previous steps succeed."
+
+      - name: I will execute
+        if: failure()
+        run: echo "I will print if any previous step fails."
+
+      - name: I will execute
+        if: ${{ !cancelled() }}
+        run: echo "I will always print, except when the workflow is cancelled."
+
+      - name: I will execute when cancelled
+        if: cancelled()
+        run: echo "I will print only when the workflow is cancelled."
