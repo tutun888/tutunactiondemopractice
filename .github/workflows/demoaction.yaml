@@ -1,31 +1,42 @@
-name: 09 - Using Functions
+name: 20 - Workflow Security
 
 on:
   pull_request:
-  workflow_dispatch:
 
 jobs:
-  echo1:
+  unsafe-pr:
     runs-on: ubuntu-latest
+    name: Unsafe PR
     steps:
-      - name: Sleep for 20 seconds
-        run: exit 1
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Failing step
-        run: sleep 10
+      - name: Check PR title (unsafe)
+        run: |
+          title=${{ github.event.pull_request.title }}
+          if [[ $title =~ ^feat ]]; then
+            echo "PR is a feature"
+            exit 0
+          else
+            echo "PR is not a feature"
+            exit 1
+          fi
 
-      - name: I will be skipped
-        if: success()
-        run: echo "I will print if previous steps succeed."
+  safer-pr:
+    runs-on: ubuntu-latest
+    name: Safer PR
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: I will execute
-        if: failure()
-        run: echo "I will print if any previous step fails."
-
-      - name: I will execute
-        if: ${{ !cancelled() }}
-        run: echo "I will always print, except when the workflow is cancelled."
-
-      - name: I will execute when cancelled
-        if: cancelled()
-        run: echo "I will print only when the workflow is cancelled."
+      - name: Check PR title (safe)
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if [[ "$TITLE" =~ ^feat ]]; then
+            echo "PR is a feature"
+            exit 0
+          else
+            echo "PR is not a feature"
+            exit 1
+          fi
