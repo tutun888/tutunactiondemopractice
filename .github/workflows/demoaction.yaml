@@ -1,5 +1,11 @@
 name: 05 - 1 - Event Filters and Activity Types
 run-name: 06 - Contexts | DEBUG - ${{ inputs.debug }}
+  inputs:
+        debug:
+          description: 'Enable debug mode'
+          required: false
+          type: boolean
+          default: false
 
 on:
   workflow_dispatch:
