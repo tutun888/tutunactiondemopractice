@@ -9,10 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Sleep for 20 seconds
-        run: sleep 20
+        run: exit 1
 
       - name: Failing step
-        run: exit 1
+        run: sleep 10
 
       - name: I will be skipped
         if: success()
