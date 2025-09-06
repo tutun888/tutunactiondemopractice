@@ -1,1 +1,13 @@
+name: Use Reusable Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  call-test:
+    uses: ./.github/workflows/reusable-test.yaml
+    with:
+      node-version: '20'
+    secrets:
+      TOKEN: ${{ secrets.MY_TOKEN }}
 
