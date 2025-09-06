@@ -1,1 +1,25 @@
+name: Reusable Test
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: true
+        type: string
+    secrets:
+      TOKEN:
+        required: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+      - run: npm ci
+      - run: npm test
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
 
