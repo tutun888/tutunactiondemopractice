@@ -1,28 +1,35 @@
-name: 05 - 1 - Event Filters and Activity Types
-run-name: 06 - Contexts | DEBUG - ${{ inputs.debug }}
-  
+name: 19 - 2 - Managing Concurrency
+
 on:
   workflow_dispatch:
-   inputs:
-      debug:
-        description: 'Enable debug mode'
-        required: false
-        type: boolean
-        default: false
 
 jobs:
-  ubuntu-echo:
+  ping-with-concurrency:
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+
     steps:
-      - name: Show OS
-        run: |
-          echo "Event name: ${{ github.event_name }}"
-          echo "Ref: ${{ github.ref }}"
-          echo "SHA: ${{ github.sha }}"
-          echo "Actor: ${{ github.actor }}"
-          echo "Workflow: ${{ github.workflow }}"
-          echo "Run ID: ${{ github.run_id }}"
-          echo "Run number: ${{ github.run_number }}"
-  
-      - name: Retrieve Variable
-        run: echo "MY_VAR value ${{ vars.MY_VAR }}"
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Ping URL
+        uses: your-org/docker-ping-url@v1
+        with:
+          url: http://10.255.255.1  # valid but unreachable
+          max_trials: 20
+          delay: 5
+
+  ping-without-concurrency:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Ping URL
+        uses: your-org/docker-ping-url@v1
+        with:
+          url: http://10.255.255.1  # same unreachable URL
+          max_trials: 20
+          delay: 5
