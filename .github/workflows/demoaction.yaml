@@ -1,25 +1,22 @@
-name: 19 - 1 - Managing Concurrency
+name: 15 - Working with Matrices
 
 on:
   workflow_dispatch:
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
-
 jobs:
-  ping:
-    runs-on: ubuntu-latest
+  backwards-compatibility:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [18.x, 20.x, 21.x]
+    name: ${{ matrix.os }}-${{ matrix.node }}
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
 
-      - name: Simulate Docker Ping URL
-        run: |
-          echo "Simulating unreachable URL ping..."
-          for i in {1..20}; do
-            echo "Trial $i: Trying to reach http://unreachable.url"
-            curl --connect-timeout 2 http://unreachable.url || echo "Unreachable"
-            sleep 5
-          done
-
+      - name: Perform some tests
+        run: echo "Running tests on OS ${{ matrix.os }} and NodeJS ${{ matrix.node }}"
